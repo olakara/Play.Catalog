@@ -11,7 +11,7 @@ namespace Play.Catalog.Service.Controllers
     {
         public static readonly List<ItemDto> items = new() 
         {
-            new ItemDto(Guid.NewGuid(),"Item 1", "Description 1", 5,DateTimeOffset.UtcNow),
+            new ItemDto(Guid.NewGuid(),"Item 1", "Description update!!", 5,DateTimeOffset.UtcNow),
             new ItemDto(Guid.NewGuid(),"Item 2", "Description 2", 7,DateTimeOffset.UtcNow),
             new ItemDto(Guid.NewGuid(),"Item 3", "Description 3", 10,DateTimeOffset.UtcNow),
         };
@@ -23,9 +23,14 @@ namespace Play.Catalog.Service.Controllers
         }
 
         [HttpGet("{id}")]
-        public ItemDto GetById(Guid id)
+        public ActionResult<ItemDto> GetById(Guid id)
         {
-            return items.Find(x => x.Id == id);
+            var item = items.Find(i => i.Id == id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+            return item;
         }
 
         [HttpPost]
