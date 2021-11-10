@@ -6,8 +6,8 @@
             "command": "dotnet",
             "type": "process",
             "args": [
-                "build",
-                "${workspaceFolder}/src/Play.Catalog.Service/Play.Catalog.Service.csproj",
+                "build",                  
+                "${workspaceFolder}/build.proj",               
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],

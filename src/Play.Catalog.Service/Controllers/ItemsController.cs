@@ -18,7 +18,7 @@ namespace Play.Catalog.Service.Controllers
 
         [HttpGet]
         public IEnumerable<ItemDto> Get()
-        {
+        {            
             return items;
         }
 
