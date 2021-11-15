@@ -6,8 +6,16 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" Version="2.13.2" />
+  </ItemGroup>
+
    <ItemGroup>        
         <ProjectReference Include="..\Play.Catalog.Application\Play.Catalog.Application.csproj" />         
     </ItemGroup>
+
+   <ItemGroup>
+     <Folder Include="NewFolder\" />
+   </ItemGroup>
 
 </Project>
