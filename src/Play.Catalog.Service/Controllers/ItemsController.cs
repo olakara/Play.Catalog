@@ -1,74 +1,67 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Play.Catalog.Application.Items.Commands.CreateItem;
+using Play.Catalog.Application.Items.Commands.DeleteItem;
+using Play.Catalog.Application.Items.Commands.UpdateItem;
+using Play.Catalog.Application.Items.Queries.Dtos;
+using Play.Catalog.Application.Items.Queries.GetItem;
+using Play.Catalog.Application.Items.Queries.GetItems;
 using Play.Catalog.Service.Dtos;
 
 namespace Play.Catalog.Service.Controllers
 {
     [ApiController]
     [Route("items")]
-    public class ItemsController : ControllerBase
+    public class ItemsController : ApiControllerBase
     {
-        public static readonly List<ItemDto> items = new() 
-        {
-            new ItemDto(Guid.NewGuid(),"Item 1", "Description update!!", 5,DateTimeOffset.UtcNow),
-            new ItemDto(Guid.NewGuid(),"Item 2", "Description 2", 7,DateTimeOffset.UtcNow),
-            new ItemDto(Guid.NewGuid(),"Item 3", "Description 3", 10,DateTimeOffset.UtcNow),
-        };
-
+        
         [HttpGet]
-        public IEnumerable<ItemDto> Get()
-        {            
-            return items;
+        public async Task<IList<ItemDto>>Get()
+        {
+
+            return await Mediator.Send(new GetItemsQuery());
         }
 
+        
         [HttpGet("{id}")]
-        public ActionResult<ItemDto> GetById(Guid id)
+        public async Task<ItemDto> GetById(Guid id)
         {
-            var item = items.Find(i => i.Id == id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-            return item;
+            return await Mediator.Send(new GetItemByIdQuery { Id = id });
         }
 
-        [HttpPost]
-        public ActionResult<ItemDto> Post(CreateItemDto createItemDto)
+        
+         [HttpPost]
+        public async Task<ActionResult<Guid>> Post(CreateItemCommand command)
         {
-           var item = new ItemDto(Guid.NewGuid(),createItemDto.Name,createItemDto.Description,createItemDto.Price,DateTimeOffset.UtcNow);
-            items.Add(item);
-            return CreatedAtAction(nameof(GetById), new { id = item.Id }, item);
+            var id = await Mediator.Send(command);
+            return CreatedAtAction(nameof(GetById), new { id = id }, id);
         }
 
+        
         [HttpPut("{id}")]
-        public IActionResult Put(Guid id, UpdateItemDto updateItemDto)
-        {
-            var item = items.Find(x => x.Id == id);
-            if (item == null)
+        public async Task<IActionResult> Put(Guid id, UpdateItemCommand command)
+        {           
+            if (command == null)
             {
                 return NotFound();
             }
 
-            var updatedItem = new ItemDto(item.Id,updateItemDto.Name,updateItemDto.Description,updateItemDto.Price,item.CreatedDate);
-            items.Remove(item);
-            items.Add(updatedItem);
+            await Mediator.Send(command);          
             
             return NoContent();
         }
 
+        
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var item = items.Find(x => x.Id == id);
-            if (item == null)
-            {
-                return NotFound();
-            }
 
-            items.Remove(item);
+            await Mediator.Send(new DeleteItemCommand { Id = id });
             return NoContent();
         }
+        
     }
     
 }

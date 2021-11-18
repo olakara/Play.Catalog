@@ -52,7 +52,11 @@ namespace Play.Catalog.Infrastructure.Persistence
                 throw new ArgumentNullException(nameof(item));
             }
 
+            item.UpdatedBy = "System";
+            item.UpdatedDate = DateTime.Now;
+
             FilterDefinition<Item>? filter = FilterBuilder.Eq(entity => entity.Id, item.Id);
+
             await this.Items.ReplaceOneAsync(filter, item);
         }
 
