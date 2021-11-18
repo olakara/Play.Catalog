@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Play.Catalog.Application;
+using Play.Catalog.Infrastructure;
 
 namespace Play.Catalog.Service
 {
@@ -27,7 +29,11 @@ namespace Play.Catalog.Service
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddApplication();
+            services.AddInfrastructure(Configuration);
+
             services.AddControllers();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Play.Catalog.Service", Version = "v1" });

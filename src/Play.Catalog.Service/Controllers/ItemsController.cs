@@ -8,7 +8,6 @@ using Play.Catalog.Application.Items.Commands.UpdateItem;
 using Play.Catalog.Application.Items.Queries.Dtos;
 using Play.Catalog.Application.Items.Queries.GetItem;
 using Play.Catalog.Application.Items.Queries.GetItems;
-using Play.Catalog.Service.Dtos;
 
 namespace Play.Catalog.Service.Controllers
 {
@@ -20,7 +19,6 @@ namespace Play.Catalog.Service.Controllers
         [HttpGet]
         public async Task<IList<ItemDto>>Get()
         {
-
             return await Mediator.Send(new GetItemsQuery());
         }
 

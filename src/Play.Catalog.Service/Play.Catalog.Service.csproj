@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -10,7 +10,7 @@
 
 
     <ItemGroup>
-        <ProjectReference Include="..\Play.Catalog.Domain\Play.Catalog.Domain.csproj" />
-        <ProjectReference Include="..\Play.Catalog.Application\Play.Catalog.Application.csproj" />         
+        <ProjectReference Include="..\Play.Catalog.Application\Play.Catalog.Application.csproj" />
+        <ProjectReference Include="..\Play.Catalog.Infrastructure\Play.Catalog.Infrastructure.csproj" />         
     </ItemGroup>
 </Project>
