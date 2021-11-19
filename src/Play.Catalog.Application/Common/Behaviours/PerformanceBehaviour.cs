@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,24 +11,27 @@ using Microsoft.Extensions.Logging;
 namespace Play.Catalog.Application.Common.Behaviours
 {
 
-    public class PerformanceBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    public class PerformanceBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest: notnull
     {
+        private readonly Stopwatch _timer;
         private readonly ILogger<TRequest> _logger;
-        private readonly int _maxConcurrentRequests;
-
-        public PerformanceBehaviour(ILogger<TRequest> logger, int maxConcurrentRequests)
+        
+        public PerformanceBehaviour(ILogger<TRequest> logger)
         {
+            _timer = new Stopwatch();
             _logger = logger;
-            _maxConcurrentRequests = maxConcurrentRequests;
+            
         }
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
-            var timer = System.Diagnostics.Stopwatch.StartNew();
-            var response = await next();
-            timer.Stop();
+            _timer.Start();
 
-            var elapsedMilliseconds = timer.ElapsedMilliseconds;
+            var response = await next();
+
+            _timer.Stop();
+
+            var elapsedMilliseconds = _timer.ElapsedMilliseconds;
 
             if (elapsedMilliseconds > 500)
             {
@@ -38,7 +42,7 @@ namespace Play.Catalog.Application.Common.Behaviours
                     { "ElapsedMilliseconds", elapsedMilliseconds.ToString() }
                 };
 
-                _logger.LogWarning("Play.Catalog.Application Long Running Request: {RequestName} ({ElapsedMilliseconds} milliseconds) {@Request}", requestName, elapsedMilliseconds, request, properties);
+                _logger.LogWarning("Play.Catalog.Application Long Running Request: {RequestName} ({ElapsedMilliseconds} milliseconds) {@Request} {prperties}", requestName, elapsedMilliseconds, request, properties);
             }
 
             return response;
