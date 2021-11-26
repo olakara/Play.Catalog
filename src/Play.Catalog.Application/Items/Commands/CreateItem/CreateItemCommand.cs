@@ -29,9 +29,7 @@ namespace Play.Catalog.Application.Items.Commands.CreateItem
             var id = Guid.NewGuid();
             await _context.CreateAsync(new Item
             {
-             Id = id,
-             CreatedBy = "System",
-             CreatedDate = DateTime.Now,
+             Id = id,            
              Description = command.Description,
              Name = command.Name,
              Price = command.Price             

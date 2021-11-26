@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using Play.Catalog.Application.Common.Exceptions;
 using Play.Catalog.Application.Common.Interfaces;
 using Play.Catalog.Domain.Entities;
 using System;
@@ -19,7 +20,7 @@ namespace Play.Catalog.Infrastructure.Persistence
 
         public ApplicationDbContext()
         {
-            var client = new MongoClient("mongodb://localhost:17017");
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("Catalog");            
             this.Items = database.GetCollection<Item>(CollectionName); 
         }
@@ -42,6 +43,9 @@ namespace Play.Catalog.Infrastructure.Persistence
                 throw new ArgumentNullException(nameof(item));
             }
 
+            item.CreatedBy = "system";
+            item.CreatedDate = DateTime.Now;
+
             await this.Items.InsertOneAsync(item);
         }
 
@@ -53,6 +57,17 @@ namespace Play.Catalog.Infrastructure.Persistence
             }            
 
             FilterDefinition<Item>? filter = FilterBuilder.Eq(entity => entity.Id, item.Id);
+            var itemInDb = this.Items.Find(filter).FirstOrDefault();
+
+            if(itemInDb == null)
+            {
+                throw new NotFoundException("item", item.Id);
+            }
+
+            item.CreatedBy = itemInDb.CreatedBy;
+            item.CreatedDate = itemInDb.CreatedDate;
+            item.UpdatedBy = "system";
+            item.UpdatedDate = DateTime.Now;
 
             await this.Items.ReplaceOneAsync(filter, item);
         }
