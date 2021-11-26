@@ -18,10 +18,8 @@ namespace Play.Catalog.Infrastructure.Persistence
 
         private readonly FilterDefinitionBuilder<Item> FilterBuilder = Builders<Item>.Filter;        
 
-        public ApplicationDbContext()
-        {
-            var client = new MongoClient("mongodb://localhost:27017");
-            var database = client.GetDatabase("Catalog");            
+        public ApplicationDbContext(IMongoDatabase database)
+        {   
             this.Items = database.GetCollection<Item>(CollectionName); 
         }
 
